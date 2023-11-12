@@ -85,7 +85,7 @@ public class App {
         //noinspection UnnecessaryLocalVariable
         final var endSize = logoSize;
         final var centerSize = pageConf.getUtilizableWidth() - (logoSize + endSize);
-        final var logoUrl = ClassLoader.getSystemResource("images/simple_pdf_logo.jpg");
+        final var logoUrl = ClassLoader.getSystemResource("images/simple_pdf_logo.png");
         final var todayFormatted = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         pdfEditor.addTable(3, tableEditor -> tableEditor
                 .setWidth(PdfWidth.max())

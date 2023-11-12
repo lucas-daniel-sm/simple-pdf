@@ -6,7 +6,6 @@ import lombok.Data;
  * This class represents the width of a PDF. The width can be either relative or absolute.
  */
 @Data
-@SuppressWarnings("ClassCanBeRecord")
 public class PdfWidth {
     /**
      * Enum representing the type of PDF width - RELATIVE or ABSOLUTE.
