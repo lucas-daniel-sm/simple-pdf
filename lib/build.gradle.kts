@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `maven-publish`
     id("io.freefair.lombok") version "8.4"
 }
 
@@ -25,4 +26,31 @@ java {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "simple-pdf"
+            from(components["java"])
+            pom {
+                name = "Simple PDF"
+                description = "Pdf library based on openpdf"
+                url = "https://github.com/lucas-daniel-sm/simple-pdf"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://github.com/lucas-daniel-sm/simple-pdf/blob/main/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "lucas-daniel-sm"
+                        name = "Lucas Mendes"
+                        email = "contato@lucasmendes.dev"
+                    }
+                }
+            }
+        }
+    }
 }
