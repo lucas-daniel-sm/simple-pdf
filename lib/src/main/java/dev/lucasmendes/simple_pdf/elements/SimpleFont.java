@@ -69,6 +69,10 @@ public class SimpleFont {
         }
     }
 
+    public SimpleFont withIncreaseSize(float size) {
+        return this.withSize(this.size + size);
+    }
+
     @Nonnull
     public Font getOpenPdfFont() {
         this.openPdfFont.setStyle(this.style.getValue());

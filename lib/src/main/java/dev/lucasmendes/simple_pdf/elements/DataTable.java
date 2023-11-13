@@ -1,9 +1,10 @@
 package dev.lucasmendes.simple_pdf.elements;
 
 import dev.lucasmendes.simple_pdf.annotations.PdfAnnotationsProcessor;
+import dev.lucasmendes.simple_pdf.configurations.DataTableStyle;
 import dev.lucasmendes.simple_pdf.configurations.PdfCommons;
 import dev.lucasmendes.simple_pdf.configurations.PdfWidth;
-import dev.lucasmendes.simple_pdf.enums.VerticalAlignment;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.annotation.Nonnull;
@@ -17,32 +18,30 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-public class ObjectTable<T> {
-
-
+@AllArgsConstructor
+public class DataTable<T> {
+    @Nonnull
+    private final PdfCommons pdfCommons;
     @Nonnull
     private final List<T> items;
     @Nonnull
     private final Map<String, Function<T, String>> customExtractor;
     @Nonnull
-    private final PdfCommons pdfCommons;
-    @Nonnull
     private final Class<T> objectClass;
+    @Nonnull
+    private final DataTableStyle style;
 
-    public ObjectTable(@Nonnull PdfCommons pdfCommons, @Nonnull List<T> items, @Nonnull Class<T> objectClass) {
+    public DataTable(@Nonnull PdfCommons pdfCommons, @Nonnull List<T> items, @Nonnull Class<T> objectClass) {
         this(pdfCommons, items, Map.of(), objectClass);
     }
 
-    public ObjectTable(
+    public DataTable(
             @Nonnull PdfCommons pdfCommons,
             @Nonnull List<T> items,
             @Nonnull Map<String, Function<T, String>> customExtractor,
             @Nonnull Class<T> objectClass
     ) {
-        this.customExtractor = customExtractor;
-        this.items = items;
-        this.pdfCommons = pdfCommons;
-        this.objectClass = objectClass;
+        this(pdfCommons, items, customExtractor, objectClass, DataTableStyle.defaults(pdfCommons.getDefaultFont()));
     }
 
     public PdfPTableEditor generateTable() {
@@ -62,15 +61,20 @@ public class ObjectTable<T> {
     private void createHeader(List<Field> objectFields, PdfPTableEditor tableEditor) {
         objectFields.stream()
                 .map(PdfAnnotationsProcessor::getFieldName)
-                .map(nome -> new SimpleParagraph(nome).withVerticalAlignment(VerticalAlignment.MIDDLE))
+                .map(nome -> this.style.getHeaderRowCellStyle().apply(nome))
                 .forEach(tableEditor::add);
     }
 
     private void addItemsToTable(List<Field> objectFields, PdfPTableEditor tableEditor) {
-        for (T item : this.items) {
+        for (int i = 0; i < this.items.size(); i++) {
+            T item = this.items.get(i);
+            var isEven = i % 2 == 0;
+            final var defaultRowInfo = new DataTableStyle.RowInfo("", i, isEven, !isEven);
+
             for (Field field : objectFields) {
                 var value = this.getFieldValue(item, field);
-                tableEditor.add(new SimpleParagraph(value).withVerticalAlignment(VerticalAlignment.MIDDLE));
+                var rowInfo = defaultRowInfo.withRowData(value);
+                tableEditor.add(this.style.getBodyRowCellStyle().apply(rowInfo));
             }
         }
     }

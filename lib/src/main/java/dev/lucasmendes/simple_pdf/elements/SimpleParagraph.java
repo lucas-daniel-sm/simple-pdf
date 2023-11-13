@@ -1,8 +1,8 @@
 package dev.lucasmendes.simple_pdf.elements;
 
+import com.lowagie.text.Paragraph;
 import dev.lucasmendes.simple_pdf.enums.HorizontalAlignment;
 import dev.lucasmendes.simple_pdf.enums.VerticalAlignment;
-import com.lowagie.text.Paragraph;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

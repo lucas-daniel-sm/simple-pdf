@@ -1,15 +1,11 @@
 package dev.lucasmendes.simple_pdf.elements;
 
+import com.lowagie.text.Element;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
 import dev.lucasmendes.simple_pdf.configurations.PdfCommons;
 import dev.lucasmendes.simple_pdf.configurations.PdfWidth;
 import dev.lucasmendes.simple_pdf.core.PdfEditorBase;
-import dev.lucasmendes.simple_pdf.default_events.ImageAlignmentInPdfPCellEvent;
-import dev.lucasmendes.simple_pdf.models.Size;
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-
-import java.util.Optional;
 
 /**
  * This is a concrete class that extends {@link PdfEditorBase}.
@@ -23,7 +19,7 @@ public class PdfPTableEditor extends PdfEditorBase<PdfPTableEditor> implements I
     /**
      * Constructor for PdfPTableEditor.
      *
-     * @param pdfTable The {@link PdfPTable} to be edited.
+     * @param pdfTable   The {@link PdfPTable} to be edited.
      * @param pdfCommons The common configurations for the PDF.
      */
     private PdfPTableEditor(PdfPTable pdfTable, PdfCommons pdfCommons) {
@@ -35,7 +31,7 @@ public class PdfPTableEditor extends PdfEditorBase<PdfPTableEditor> implements I
      * Constructor for PdfPTableEditor with relative width.
      *
      * @param relativeWidth The relative width of the columns.
-     * @param pdfCommons The common configurations for the PDF.
+     * @param pdfCommons    The common configurations for the PDF.
      */
     public PdfPTableEditor(float[] relativeWidth, PdfCommons pdfCommons) {
         this(new PdfPTable(relativeWidth), pdfCommons);
@@ -51,6 +47,7 @@ public class PdfPTableEditor extends PdfEditorBase<PdfPTableEditor> implements I
         this(new PdfPTable(numColumns), pdfCommons);
     }
 
+
     /**
      * This method is used to insert an element into the table.
      *
@@ -59,28 +56,23 @@ public class PdfPTableEditor extends PdfEditorBase<PdfPTableEditor> implements I
      */
     @Override
     protected boolean insertElement(Insertable<?> insertable) {
-        // cannot be final
-        var cell = new PdfPCell();
-
-        if (insertable instanceof PdfImage) {
-            var image = (PdfImage) insertable;
-            var imageElement = (Image) image.getElement();
-            var imgHeight = Optional.ofNullable(image.getSize())
-                    .map(Size::getHeight)
-                    .orElse(imageElement.getPlainHeight());
-            cell.setFixedHeight(imgHeight);
-            cell.setCellEvent(new ImageAlignmentInPdfPCellEvent(image));
-        } else if (insertable instanceof SimpleParagraph) {
-            var paragraph = (SimpleParagraph) insertable;
-            cell.setPhrase(paragraph.getElement());
-            cell.setHorizontalAlignment(paragraph.getHorizontalAlignment().getValue());
-            cell.setVerticalAlignment(paragraph.getVerticalAlignment().getValue());
+        SimpleTableCell<?> simpleCell;
+        if (insertable instanceof SimpleTableCell) {
+            simpleCell = (SimpleTableCell<?>) insertable;
         } else {
-            throw new IllegalStateException("Unexpected value: " + insertable.getName());
+            simpleCell = new SimpleTableCell<>(insertable);
         }
-        this.pdfTable.addCell(cell);
+        if (simpleCell.getContent() instanceof SimpleParagraph) {
+            var paragraph = (SimpleParagraph) simpleCell.getContent();
+            if (paragraph.getFont() == null) {
+                SimpleParagraph ae = paragraph.withFont(this.getPdfCommons().getDefaultFont());
+                simpleCell = simpleCell.withContent(ae);
+            }
+        }
+        this.pdfTable.addCell(simpleCell.getElement());
         return true;
     }
+
 
     /**
      * This method is used to get the current instance of {@link PdfPTableEditor}.
