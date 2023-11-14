@@ -6,6 +6,7 @@ import com.lowagie.text.Element;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
+import lombok.experimental.SuperBuilder;
 
 import javax.annotation.Nonnull;
 
@@ -18,6 +19,7 @@ import javax.annotation.Nonnull;
  */
 @Getter
 @RequiredArgsConstructor
+@SuperBuilder
 public abstract class AbstractElement<E extends Element> implements Insertable<E> {
 
     /**
@@ -33,6 +35,10 @@ public abstract class AbstractElement<E extends Element> implements Insertable<E
     @With
     @Nonnull
     private final VerticalAlignment verticalAlignment;
+
+    public AbstractElement() {
+        this(HorizontalAlignment.LEFT, VerticalAlignment.TOP);
+    }
 
     /**
      * This method is used to get the name of the element.

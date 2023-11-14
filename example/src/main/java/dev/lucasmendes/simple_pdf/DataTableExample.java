@@ -22,7 +22,7 @@ public class DataTableExample {
 
     @SneakyThrows
     public static void generate(Path pdfDir) {
-        var employeeService = new EmployeeService(50);
+        var employeeService = new EmployeeService(70);
         var pdfFile = pdfDir.resolve("DataTableExample.pdf").toFile();
 
         var fontRoboto = createFontFromResources("fonts/Roboto-Regular.ttf");
@@ -38,12 +38,11 @@ public class DataTableExample {
                     .registerEvents()
                     .open()
                     .toEditor()
-                    .add(new DataTable<>(
-                            wrapper.getPdfCommons(),
-                            employeeService.getEmployees(),
-                            Employee.class
-                    ).generateTable())
-            ;
+                    .<Employee>addDataTable(
+                            dataTableBuilder -> dataTableBuilder
+                                    .items(employeeService.getEmployees())
+                                    .objectClass(Employee.class)
+                    );
         }
     }
 

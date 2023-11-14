@@ -11,6 +11,10 @@ repositories {
 group = "dev.lucasmendes"
 version = "0.0.1-SNAPSHOT"
 
+tasks.named<Jar>("jar") {
+    archiveBaseName.set(rootProject.name)
+}
+
 dependencies {
     implementation("com.github.librepdf:openpdf:1.3.30")
     implementation("org.apache.commons:commons-lang3:3.13.0")

@@ -1,10 +1,11 @@
 package dev.lucasmendes.simple_pdf.core;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfWriter;
 import dev.lucasmendes.simple_pdf.configurations.PdfCommons;
 import dev.lucasmendes.simple_pdf.elements.Insertable;
 import dev.lucasmendes.simple_pdf.elements.PdfPTableEditor;
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfWriter;
+import dev.lucasmendes.simple_pdf.exceptions.CouldNotCreateException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
